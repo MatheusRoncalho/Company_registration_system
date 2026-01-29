@@ -1,0 +1,14 @@
+version: '2.4'
+services:
+  db:
+    image: mysql
+    container_name: registration-system-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - company_resgistration_system:/var/lib/mysql
+
+volumes:
+  company_resgistration_system:
