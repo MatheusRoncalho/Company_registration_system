@@ -6,7 +6,10 @@ import com.company.registration.domain.Client;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientDAO {
 
@@ -26,5 +29,31 @@ public class ClientDAO {
         ps.setString(1, client.getFirstName());
         ps.setString(2, client.getEmail());
         return ps;
+    }
+
+    public static List<Client> findAllClients() {
+        System.out.println("Finding all clients");
+        List<Client> clients = new ArrayList<>();
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = findAllClientPreparedStatement(conn)) {
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                Client client = new Client.ClientBuilder()
+                        .id(rs.getInt("id"))
+                        .firstName(rs.getString("name"))
+                        .email(rs.getString("email"))
+                        .build();
+                clients.add(client);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return clients;
+    }
+
+    private static PreparedStatement  findAllClientPreparedStatement(Connection conn) throws SQLException {
+        String sql = "SELECT * FROM `registration_system`.`client`;";
+        return conn.prepareStatement(sql);
     }
 }
