@@ -11,6 +11,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 public class ClientDAO {
 
@@ -58,21 +59,21 @@ public class ClientDAO {
         return conn.prepareStatement(sql);
     }
 
-    public static Client findClientById(int id) {
+    public static Optional<Client> findClientById(int id) {
         System.out.println("Finding client by id");
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement ps = findClientByIdPreparedStatement(conn, id)) {
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return new Client.ClientBuilder()
+            if (!rs.next()) Optional.empty();
+            return Optional.of(new Client.ClientBuilder()
                     .id(rs.getInt("id"))
                     .firstName(rs.getString("name"))
                     .email(rs.getString("email"))
-                    .build();
+                    .build());
         } catch (SQLException e) {
             System.out.println("Client with ID "+id+" not found");
         }
-        return null;
+        return Optional.empty();
     }
 
     private static PreparedStatement findClientByIdPreparedStatement(Connection conn, int id) throws SQLException {
