@@ -20,6 +20,7 @@ public class Menu {
                     op = Integer.parseInt(SCANNER.nextLine());
                     ClientService.buildMenu(op);
                 }
+                default ->  System.out.println("Invalid option");
             }
         }
     }
@@ -33,8 +34,7 @@ public class Menu {
     private static void clientMenu() {
         System.out.println("Client menu");
         System.out.println("1. Create Client");
+        System.out.println("2. Find all Clients");
         System.out.println("9. Go back");
     }
-
-
 }
