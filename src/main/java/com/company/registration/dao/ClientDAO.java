@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 
 public class ClientDAO {
 
@@ -19,6 +19,7 @@ public class ClientDAO {
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement ps = saveClientPreparedStatement(conn, client)) {
             ps.executeUpdate();
+            System.out.println("Client save successfully");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -58,25 +59,47 @@ public class ClientDAO {
         return conn.prepareStatement(sql);
     }
 
-    public static Client findClientById(int id) {
-        System.out.println("Finding client by id");
+    public static Optional<Client> findClientById(int id) {
+        System.out.printf("Finding client by id %d\n", id);
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement ps = findClientByIdPreparedStatement(conn, id)) {
             ResultSet rs = ps.executeQuery();
-            rs.next();
-            return new Client.ClientBuilder()
+            if (!rs.next()) Optional.empty();
+            return Optional.of(new Client.ClientBuilder()
                     .id(rs.getInt("id"))
                     .firstName(rs.getString("name"))
                     .email(rs.getString("email"))
-                    .build();
+                    .build());
         } catch (SQLException e) {
             System.out.println("Client with ID "+id+" not found");
         }
-        return null;
+        return Optional.empty();
     }
 
     private static PreparedStatement findClientByIdPreparedStatement(Connection conn, int id) throws SQLException {
         String sql = "SELECT * FROM `registration_system`.`client` WHERE id = ?;";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, id);
+        return ps;
+    }
+
+    public static void deleteClientById(int id) {
+        System.out.printf("Deleting client by id %d\n", id);
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = deleteClientByIdPreparedStatement(conn, id)) {
+            int rowAffected = ps.executeUpdate();
+            if (rowAffected == 0) {
+                System.out.println("Client with id "+id+" not found");
+                return;
+            }
+            System.out.println("Client with id "+id+" deleted successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static PreparedStatement deleteClientByIdPreparedStatement(Connection conn, int id) throws SQLException {
+        String sql = "DELETE FROM `registration_system`.`client` WHERE id = ?;";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, id);
         return ps;

@@ -4,7 +4,7 @@ import com.company.registration.dao.ClientDAO;
 import com.company.registration.domain.Client;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.Scanner;
 
 
@@ -16,6 +16,7 @@ public class ClientService {
             case 1 -> saveClient();
             case 2 -> findAllClients();
             case 3 -> findClientById();
+            case 4 -> deleteClientById();
         }
     }
 
@@ -34,17 +35,23 @@ public class ClientService {
 
     private static void findAllClients() {
         List<Client> clientList = ClientDAO.findAllClients();
-        clientList.forEach(client -> {
-            System.out.printf("ID: %d, name: %s, email: %s%n", client.getId(), client.getFirstName(), client.getEmail());
+        clientList.forEach(c -> {
+            System.out.printf("ID: %d, name: %s, email: %s%n", c.getId(), c.getFirstName(), c.getEmail());
         });
     }
 
     private static void findClientById() {
         System.out.println("Type the ID of the client you want to find");
         int id = Integer.parseInt(SCANNER.nextLine());
-        Client client = ClientDAO.findClientById(id);
-        if (!Objects.isNull(client)) {
-            System.out.printf("ID: %d, name: %s, email: %s%n", client.getId(), client.getFirstName(), client.getEmail());
-        }
+        Optional<Client> clientOptional = ClientDAO.findClientById(id);
+        if (clientOptional.isEmpty()) return;
+        clientOptional.ifPresent(c -> System.out.printf("ID: %d, name: %s, email: %s%n", c.getId(), c.getFirstName(), c.getEmail()));
+    }
+
+    private static void deleteClientById() {
+        findAllClients();
+        System.out.println("Type the ID of the client you want to delete");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        ClientDAO.deleteClientById(id);
     }
 }
