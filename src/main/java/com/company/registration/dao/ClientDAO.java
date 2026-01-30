@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ClientDAO {
 
@@ -55,5 +56,29 @@ public class ClientDAO {
     private static PreparedStatement  findAllClientPreparedStatement(Connection conn) throws SQLException {
         String sql = "SELECT * FROM `registration_system`.`client`;";
         return conn.prepareStatement(sql);
+    }
+
+    public static Client findClientById(int id) {
+        System.out.println("Finding client by id");
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = findClientByIdPreparedStatement(conn, id)) {
+            ResultSet rs = ps.executeQuery();
+            rs.next();
+            return new Client.ClientBuilder()
+                    .id(rs.getInt("id"))
+                    .firstName(rs.getString("name"))
+                    .email(rs.getString("email"))
+                    .build();
+        } catch (SQLException e) {
+            System.out.println("Client with ID "+id+" not found");
+        }
+        return null;
+    }
+
+    private static PreparedStatement findClientByIdPreparedStatement(Connection conn, int id) throws SQLException {
+        String sql = "SELECT * FROM `registration_system`.`client` WHERE id = ?;";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, id);
+        return ps;
     }
 }
