@@ -4,6 +4,7 @@ import com.company.registration.dao.ClientDAO;
 import com.company.registration.domain.Client;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 
 
@@ -14,6 +15,7 @@ public class ClientService {
         switch (op) {
             case 1 -> saveClient();
             case 2 -> findAllClients();
+            case 3 -> findClientById();
         }
     }
 
@@ -35,5 +37,14 @@ public class ClientService {
         clientList.forEach(client -> {
             System.out.printf("ID: %d, name: %s, email: %s%n", client.getId(), client.getFirstName(), client.getEmail());
         });
+    }
+
+    private static void findClientById() {
+        System.out.println("Type the ID of the client you want to find");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        Client client = ClientDAO.findClientById(id);
+        if (!Objects.isNull(client)) {
+            System.out.printf("ID: %d, name: %s, email: %s%n", client.getId(), client.getFirstName(), client.getEmail());
+        }
     }
 }

@@ -33,8 +33,9 @@ public class Menu {
 
     private static void clientMenu() {
         System.out.println("Client menu");
-        System.out.println("1. Create Client");
-        System.out.println("2. Find all Clients");
+        System.out.println("1. Create client");
+        System.out.println("2. Find all clients");
+        System.out.println("3. Find client by id");
         System.out.println("9. Go back");
     }
 }
