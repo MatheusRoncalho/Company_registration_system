@@ -16,6 +16,7 @@ public class ClientService {
             case 1 -> saveClient();
             case 2 -> findAllClients();
             case 3 -> findClientById();
+            case 4 -> deleteClientById();
         }
     }
 
@@ -45,5 +46,12 @@ public class ClientService {
         Optional<Client> clientOptional = ClientDAO.findClientById(id);
         if (clientOptional.isEmpty()) return;
         clientOptional.ifPresent(c -> System.out.printf("ID: %d, name: %s, email: %s%n", c.getId(), c.getFirstName(), c.getEmail()));
+    }
+
+    private static void deleteClientById() {
+        findAllClients();
+        System.out.println("Type the ID of the client you want to delete");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        ClientDAO.deleteClientById(id);
     }
 }
