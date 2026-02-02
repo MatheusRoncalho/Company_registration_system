@@ -27,6 +27,11 @@ public class ClientService {
         System.out.println("Type the email address");
         String email = SCANNER.nextLine();
 
+        if (ClientDAO.findAllClients().stream().anyMatch(c -> c.getEmail().equals(email))) {
+            System.out.println("There is already a client with that email address");
+            return;
+        }
+
         Client client = new Client.ClientBuilder()
                 .firstName(firstName)
                 .email(email)
