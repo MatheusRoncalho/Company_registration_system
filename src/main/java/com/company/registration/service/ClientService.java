@@ -16,7 +16,8 @@ public class ClientService {
             case 1 -> saveClient();
             case 2 -> findAllClients();
             case 3 -> findClientById();
-            case 4 -> deleteClientById();
+            case 4 -> updateClientById();
+            case 5 -> deleteClientById();
         }
     }
 
@@ -46,6 +47,27 @@ public class ClientService {
         Optional<Client> clientOptional = ClientDAO.findClientById(id);
         if (clientOptional.isEmpty()) return;
         clientOptional.ifPresent(c -> System.out.printf("ID: %d, name: %s, email: %s%n", c.getId(), c.getFirstName(), c.getEmail()));
+    }
+
+    private static void updateClientById() {
+        findAllClients();
+        System.out.println("Type the ID of the client you want to update");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        Optional<Client> clientOptional = ClientDAO.findClientById(id);
+        if (clientOptional.isEmpty()) return;
+
+        Client clientFromDb = clientOptional.get();
+        System.out.println("Type the name (ENTER to keep the same)");
+        String firstName = SCANNER.nextLine();
+        firstName = firstName.isBlank() ? clientFromDb.getFirstName() : firstName;
+        System.out.println("Type the email (ENTER to keep the same)");
+        String email = SCANNER.nextLine();
+        email = email.isBlank() ? clientFromDb.getEmail() : email;
+        ClientDAO.updateClient(new Client.ClientBuilder()
+                .id(id)
+                .firstName(firstName)
+                .email(email)
+                .build());
     }
 
     private static void deleteClientById() {

@@ -83,6 +83,26 @@ public class ClientDAO {
         return ps;
     }
 
+    public static void updateClient(Client client) {
+        System.out.printf("Updating client with ID %d\n", client.getId());
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = updateClientPreparedStatement(conn, client)) {
+            ps.executeUpdate();
+            System.out.println("Client update successfully");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private static PreparedStatement updateClientPreparedStatement(Connection conn, Client client) throws SQLException {
+        String sql = "UPDATE `registration_system`.`client` SET `name` = ?, `email` = ? WHERE (`id` = ?);";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, client.getFirstName());
+        ps.setString(2, client.getEmail());
+        ps.setInt(3, client.getId());
+        return ps;
+    }
+
     public static void deleteClientById(int id) {
         System.out.printf("Deleting client by id %d\n", id);
         try(Connection conn = ConnectionFactory.getConnection();
