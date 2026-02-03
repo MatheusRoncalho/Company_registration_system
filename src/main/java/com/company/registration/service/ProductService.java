@@ -16,6 +16,7 @@ public class ProductService {
             case 1 -> saveProduct();
             case 2 -> findAllProducts();
             case 3 -> findProductById();
+            case 4 -> updateProduct();
         }
     }
 
@@ -47,5 +48,29 @@ public class ProductService {
         }
         productById.ifPresent(p ->
                 System.out.printf("ID: %d, Name: %s, Price: %.2f%n", p.getId(), p.getName(), p.getPrice()));
+    }
+
+    public static void updateProduct() {
+        findAllProducts();
+        System.out.println("Type the ID of the product: ");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        Optional<Product> productOptional = ProductDAO.findProductById(id);
+        if (productOptional.isEmpty()) {
+            System.out.printf("Error, Product with id %d not exist\n", id);
+            return;
+        }
+        Product productFromDb = productOptional.get();
+        System.out.println("Type the name ( ENTER to keep the same): ");
+        String name = SCANNER.nextLine();
+        name = name.isBlank() ? productFromDb.getName() : name;
+        System.out.println("Type the price ( ENTER to keep the same): ");
+        String price = SCANNER.nextLine().replace(",", ".");
+        price = price.isBlank() ? productFromDb.getPrice().toString() : price;
+        BigDecimal newPrice = new BigDecimal(price);
+        ProductDAO.updateProduct(new Product.ProductBuilder()
+                .id(id)
+                .name(name)
+                .price(newPrice)
+                .build());
     }
 }

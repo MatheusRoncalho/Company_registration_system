@@ -81,4 +81,25 @@ public class ProductDAO {
         return ps;
     }
 
+    public static void updateProduct(Product productToUpdate) {
+        System.out.printf("updating product with id %d\n", productToUpdate.getId());
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = updateProductPreparedStatement(conn, productToUpdate)) {
+            ps.executeUpdate();
+            System.out.println("Product updated successful");
+        } catch (SQLException e) {
+            System.out.println("Error while updating product");
+            e.printStackTrace();
+        }
+    }
+
+    private static PreparedStatement updateProductPreparedStatement(Connection conn, Product product) throws SQLException {
+        String sql = "UPDATE `registration_system`.`product` SET `name` = ?, `price` = ? WHERE `id` = ?;";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, product.getName());
+        ps.setBigDecimal(2, product.getPrice());
+        ps.setInt(3, product.getId());
+        return ps;
+    }
+
 }
