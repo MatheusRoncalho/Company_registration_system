@@ -41,9 +41,8 @@ public class ClientService {
 
     private static void findAllClients() {
         List<Client> clientList = ClientDAO.findAllClients();
-        clientList.forEach(c -> {
-            System.out.printf("ID: %d, name: %s, email: %s%n", c.getId(), c.getFirstName(), c.getEmail());
-        });
+        clientList.forEach(c ->
+                System.out.printf("ID: %d, Name: %s, Email: %s%n", c.getId(), c.getFirstName(), c.getEmail()));
     }
 
     private static void findClientById() {
