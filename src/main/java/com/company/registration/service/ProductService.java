@@ -5,6 +5,7 @@ import com.company.registration.domain.Product;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.Scanner;
 
 public class ProductService {
@@ -14,6 +15,7 @@ public class ProductService {
         switch (op) {
             case 1 -> saveProduct();
             case 2 -> findAllProducts();
+            case 3 -> findProductById();
         }
     }
 
@@ -32,6 +34,18 @@ public class ProductService {
     public static void findAllProducts() {
         List<Product> productList = ProductDAO.findAllProducts();
         productList.forEach(p ->
+                System.out.printf("ID: %d, Name: %s, Price: %.2f%n", p.getId(), p.getName(), p.getPrice()));
+    }
+
+    public static void findProductById() {
+        System.out.println("Type the ID of the product: ");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        Optional<Product> productById = ProductDAO.findProductById(id);
+        if (productById.isEmpty()) {
+            System.out.printf("Error, Product with id %d not exist\n", id);
+            return;
+        }
+        productById.ifPresent(p ->
                 System.out.printf("ID: %d, Name: %s, Price: %.2f%n", p.getId(), p.getName(), p.getPrice()));
     }
 }
