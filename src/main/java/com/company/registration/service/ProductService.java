@@ -17,6 +17,7 @@ public class ProductService {
             case 2 -> findAllProducts();
             case 3 -> findProductById();
             case 4 -> updateProduct();
+            case 5 -> deleteProduct();
         }
     }
 
@@ -72,5 +73,12 @@ public class ProductService {
                 .name(name)
                 .price(newPrice)
                 .build());
+    }
+
+    public static void deleteProduct() {
+        findAllProducts();
+        System.out.println("Type the ID of the product you want to delete: ");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        ProductDAO.deleteProductById(id);
     }
 }

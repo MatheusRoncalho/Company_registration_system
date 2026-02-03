@@ -18,7 +18,7 @@ public class ProductDAO {
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement ps = saveProductPreparedStatement(conn, product)) {
             ps.executeUpdate();
-            System.out.println("Product save successful");
+            System.out.println("Product save successfully");
         } catch (SQLException e) {
             System.out.println("Error while saving product");
         }
@@ -86,7 +86,7 @@ public class ProductDAO {
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement ps = updateProductPreparedStatement(conn, productToUpdate)) {
             ps.executeUpdate();
-            System.out.println("Product updated successful");
+            System.out.println("Product updated successfully");
         } catch (SQLException e) {
             System.out.println("Error while updating product");
             e.printStackTrace();
@@ -102,4 +102,25 @@ public class ProductDAO {
         return ps;
     }
 
+    public static  void deleteProductById(int id) {
+        System.out.printf("deleting product with id %d\n", id);
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = deleteProductPreparedStatement(conn, id)) {
+            int rowsAffeted = ps.executeUpdate();
+            if (rowsAffeted == 0) {
+                System.out.println("Product with id " + id + " not exist");
+                return;
+            }
+            System.out.println("Product delete successfully");
+        } catch (SQLException e) {
+            System.out.println("Error while deleting product");
+        }
+    }
+
+    private static PreparedStatement deleteProductPreparedStatement(Connection conn, int id) throws SQLException {
+        String sql = "DELETE FROM `registration_system`.`product` WHERE id = ?;";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, id);
+        return ps;
+    }
 }
