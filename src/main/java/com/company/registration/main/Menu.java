@@ -1,6 +1,7 @@
 package com.company.registration.main;
 
 import com.company.registration.service.ClientService;
+import com.company.registration.service.ProductService;
 
 import java.util.Scanner;
 
@@ -20,6 +21,12 @@ public class Menu {
                     op = Integer.parseInt(SCANNER.nextLine());
                     ClientService.buildMenu(op);
                 }
+                case 2 -> {
+                    productMenu();
+                    System.out.println("Type the option you want");
+                    op = Integer.parseInt(SCANNER.nextLine());
+                    ProductService.buildMenu(op);
+                }
                 default ->  System.out.println("Invalid option");
             }
         }
@@ -28,6 +35,7 @@ public class Menu {
     private static void menu() {
         System.out.println("Main menu");
         System.out.println("1. Client");
+        System.out.println("2. Product");
         System.out.println("0. Exit");
     }
 
@@ -37,7 +45,17 @@ public class Menu {
         System.out.println("2. Find all clients");
         System.out.println("3. Find client by id");
         System.out.println("4. Update client");
-        System.out.println("5. Deleting client by id");
+        System.out.println("5. Delete client");
+        System.out.println("9. Go back");
+    }
+
+    private static void productMenu() {
+        System.out.println("Product menu");
+        System.out.println("1. Create product");
+        System.out.println("2. Find all products");
+        System.out.println("3. Find product by id");
+        System.out.println("4. Update product");
+        System.out.println("5. Delete product");
         System.out.println("9. Go back");
     }
 }
