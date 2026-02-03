@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ProductDAO {
 
@@ -53,6 +54,31 @@ public class ProductDAO {
     private static PreparedStatement findAllProductsPreparedStatement(Connection conn) throws SQLException {
         String sql = "SELECT * FROM `registration_system`.`product`";
         return conn.prepareStatement(sql);
+    }
+
+    public static Optional<Product> findProductById(int id) {
+        System.out.printf("finding product with id %d\n", id);
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = findProductByIdPreparedStatement(conn, id)) {
+            ResultSet rs = ps.executeQuery();
+            if (!rs.next()) return Optional.empty();
+            Product product = new Product.ProductBuilder()
+                    .id(rs.getInt("id"))
+                    .name(rs.getString("name"))
+                    .price(rs.getBigDecimal("price"))
+                    .build();
+            return Optional.of(product);
+        } catch (SQLException e) {
+            System.out.printf("Error, Product with id %d not exist\n", id);
+        }
+        return Optional.empty();
+    }
+
+    private static PreparedStatement findProductByIdPreparedStatement(Connection conn, int id) throws SQLException {
+        String sql = "SELECT * FROM `registration_system`.`product` WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, id);
+        return ps;
     }
 
 }
