@@ -39,13 +39,13 @@ public class ClientService {
         ClientDAO.saveClient(client);
     }
 
-    private static void findAllClients() {
+    public static void findAllClients() {
         List<Client> clientList = ClientDAO.findAllClients();
         clientList.forEach(c ->
                 System.out.printf("ID: %d, Name: %s, Email: %s%n", c.getId(), c.getFirstName(), c.getEmail()));
     }
 
-    private static void findClientById() {
+    public static void findClientById() {
         System.out.println("Type the ID of the client you want to find");
         int id = Integer.parseInt(SCANNER.nextLine());
         Optional<Client> clientOptional = ClientDAO.findClientById(id);
