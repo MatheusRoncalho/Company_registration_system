@@ -60,7 +60,6 @@ public class ClientDAO {
     }
 
     public static Optional<Client> findClientById(int id) {
-        System.out.printf("Finding client by id %d\n", id);
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement ps = findClientByIdPreparedStatement(conn, id)) {
             ResultSet rs = ps.executeQuery();
