@@ -61,7 +61,7 @@ public class ProductDAO {
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement ps = findProductByIdPreparedStatement(conn, id)) {
             ResultSet rs = ps.executeQuery();
-            if (!rs.next()) return Optional.empty();
+            if (!rs.next()) Optional.empty();
             Product product = new Product.ProductBuilder()
                     .id(rs.getInt("id"))
                     .name(rs.getString("name"))

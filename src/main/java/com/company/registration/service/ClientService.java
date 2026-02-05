@@ -42,7 +42,7 @@ public class ClientService {
     public static void findAllClients() {
         List<Client> clientList = ClientDAO.findAllClients();
         clientList.forEach(c ->
-                System.out.printf("ID: %d, Name: %s, Email: %s%n", c.getId(), c.getFirstName(), c.getEmail()));
+                System.out.printf("ID: %d | Name: %s | Email: %s%n", c.getId(), c.getFirstName(), c.getEmail()));
     }
 
     public static void findClientById() {
@@ -50,7 +50,7 @@ public class ClientService {
         int id = Integer.parseInt(SCANNER.nextLine());
         Optional<Client> clientOptional = ClientDAO.findClientById(id);
         if (clientOptional.isEmpty()) return;
-        clientOptional.ifPresent(c -> System.out.printf("ID: %d, name: %s, email: %s%n", c.getId(), c.getFirstName(), c.getEmail()));
+        clientOptional.ifPresent(c -> System.out.printf("ID: %d | name: %s | email: %s%n", c.getId(), c.getFirstName(), c.getEmail()));
     }
 
     private static void updateClientById() {

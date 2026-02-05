@@ -62,4 +62,33 @@ public class OrdersDAO {
         String sql = "SELECT * FROM `registration_system`.`orders`";
         return conn.prepareStatement(sql);
     }
+
+    public static Optional<Orders> findOrderById(int id) {
+        System.out.printf("Finding order by id %d%n", id);
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = findOrderByIdPreparedStatement(conn, id)) {
+            ResultSet rs = ps.executeQuery();
+            Client clientById;
+            if (!rs.next()) Optional.empty();
+            Optional<Client> clientOptional = ClientDAO.findClientById(rs.getInt("client_id"));
+            clientById = clientOptional.get();
+            Orders order = new Orders.OrdersBuilder()
+                    .id(rs.getInt("id"))
+                    .client(clientById)
+                    .order_date(rs.getTimestamp("order_date").toLocalDateTime())
+                    .total(rs.getBigDecimal("total"))
+                    .build();
+            return Optional.of(order);
+        } catch (SQLException e) {
+            System.out.printf("Error, Order with id %d not exist%n", id);
+        }
+        return Optional.empty();
+    }
+
+    private static PreparedStatement findOrderByIdPreparedStatement(Connection conn, int id) throws SQLException {
+        String sql = "SELECT * FROM `registration_system`.`orders` WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, id);
+        return ps;
+    }
 }
