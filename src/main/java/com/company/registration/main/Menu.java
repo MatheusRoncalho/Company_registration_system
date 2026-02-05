@@ -70,6 +70,9 @@ public class Menu {
     private static void orderMenu() {
         System.out.println("Order menu");
         System.out.println("1. Create order");
+        System.out.println("2. Find all orders");
+        System.out.println("3. Find order by id");
+        System.out.println("4. Add product to an existing order");
         System.out.println("9. Go back");
     }
 }

@@ -1,12 +1,16 @@
 package com.company.registration.dao;
 
 import com.company.registration.conn.ConnectionFactory;
+import com.company.registration.domain.Client;
 import com.company.registration.domain.Orders;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class OrdersDAO {
 
@@ -28,5 +32,34 @@ public class OrdersDAO {
         ps.setInt(1, order.getClient().getId());
         ps.setBigDecimal(2, order.getTotal());
         return ps;
+    }
+
+    public static List<Orders> findAllOrders() {
+        List<Orders> orders = new ArrayList<>();
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = findAllOrdersPreparedStatement(conn)) {
+            ResultSet rs = ps.executeQuery();
+            Client clientById;
+            while (rs.next()) {
+                Optional<Client> clientOptional = ClientDAO.findClientById(rs.getInt("client_id"));
+                if (clientOptional.isEmpty()) break;
+                clientById = clientOptional.get();
+                Orders order = new Orders.OrdersBuilder()
+                        .id(rs.getInt("id"))
+                        .client(clientById)
+                        .order_date(rs.getTimestamp("order_date").toLocalDateTime())
+                        .total(rs.getBigDecimal("total"))
+                        .build();
+                orders.add(order);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error while fetching orders\n");
+        }
+        return orders;
+    }
+
+    private static PreparedStatement findAllOrdersPreparedStatement(Connection conn) throws SQLException {
+        String sql = "SELECT * FROM `registration_system`.`orders`";
+        return conn.prepareStatement(sql);
     }
 }

@@ -21,7 +21,7 @@ public class ProductService {
         }
     }
 
-    public static void saveProduct() {
+    private static void saveProduct() {
         System.out.println("Type the name of the product: ");
         String name = SCANNER.nextLine();
         System.out.println("Type the price of the product: ");
@@ -51,7 +51,7 @@ public class ProductService {
                 System.out.printf("ID: %d, Name: %s, Price: %.2f%n", p.getId(), p.getName(), p.getPrice()));
     }
 
-    public static void updateProduct() {
+    private static void updateProduct() {
         findAllProducts();
         System.out.println("Type the ID of the product: ");
         int id = Integer.parseInt(SCANNER.nextLine());
@@ -75,7 +75,7 @@ public class ProductService {
                 .build());
     }
 
-    public static void deleteProduct() {
+    private static void deleteProduct() {
         findAllProducts();
         System.out.println("Type the ID of the product you want to delete: ");
         int id = Integer.parseInt(SCANNER.nextLine());

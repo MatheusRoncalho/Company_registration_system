@@ -5,10 +5,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Orders {
-    private Integer id;
-    private Client client;
-    private LocalDateTime order_date;
-    private BigDecimal total;
+    private final Integer id;
+    private final Client client;
+    private final LocalDateTime order_date;
+    private final BigDecimal total;
 
     public Orders(Integer id, Client client, LocalDateTime order_date, BigDecimal total) {
         this.id = id;
