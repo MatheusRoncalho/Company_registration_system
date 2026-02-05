@@ -57,11 +57,10 @@ public class ProductDAO {
     }
 
     public static Optional<Product> findProductById(int id) {
-        System.out.printf("finding product with id %d\n", id);
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement ps = findProductByIdPreparedStatement(conn, id)) {
             ResultSet rs = ps.executeQuery();
-            if (!rs.next()) return Optional.empty();
+            if (!rs.next()) Optional.empty();
             Product product = new Product.ProductBuilder()
                     .id(rs.getInt("id"))
                     .name(rs.getString("name"))

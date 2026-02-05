@@ -36,7 +36,7 @@ public class ProductService {
     public static void findAllProducts() {
         List<Product> productList = ProductDAO.findAllProducts();
         productList.forEach(p ->
-                System.out.printf("ID: %d, Name: %s, Price: %.2f%n", p.getId(), p.getName(), p.getPrice()));
+                System.out.printf("ID: %d | Name: %s | Price: %.2f%n", p.getId(), p.getName(), p.getPrice()));
     }
 
     public static void findProductById() {
@@ -48,7 +48,7 @@ public class ProductService {
             return;
         }
         productById.ifPresent(p ->
-                System.out.printf("ID: %d, Name: %s, Price: %.2f%n", p.getId(), p.getName(), p.getPrice()));
+                System.out.printf("ID: %d | Name: %s | Price: %.2f%n", p.getId(), p.getName(), p.getPrice()));
     }
 
     private static void updateProduct() {
