@@ -64,7 +64,6 @@ public class OrdersDAO {
     }
 
     public static Optional<Orders> findOrderById(int id) {
-        System.out.printf("Finding order by id %d%n", id);
         try(Connection conn = ConnectionFactory.getConnection();
         PreparedStatement ps = findOrderByIdPreparedStatement(conn, id)) {
             ResultSet rs = ps.executeQuery();

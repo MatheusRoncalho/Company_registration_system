@@ -28,6 +28,7 @@ public class OrdersService {
             case 2 -> findAllOrders();
             case 3 -> findOrderById();
             case 4 -> addProductToOrder();
+            case 5 -> deleteItemFromOrderItem();
         }
     }
 
@@ -84,5 +85,23 @@ public class OrdersService {
                 .price(product.getPrice())
                 .build();
         OrderItemDAO.addProductToOrder(orderItem);
+    }
+
+    public static void findAllOrderItems() {
+        List<OrderItem> orderItems = OrderItemDAO.findAllOrderItems();
+        orderItems.forEach(oi ->
+                System.out.printf("ID: %d | order_id: %d | product_id: %d | quantity: %d | price: %s%n",
+                        oi.getId(), oi.getOrder().getId(), oi.getProduct().getId(), oi.getQuantity(), NF.format(oi.getPrice())));
+    }
+
+    public static void deleteItemFromOrderItem() {
+        findAllOrderItems();
+        System.out.println("Type te ID of the item you want to delete: ");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        if (OrderItemDAO.findAllOrderItems().stream().anyMatch(oi -> oi.getId() == id)) {
+            OrderItemDAO.deleteItemFromOrder(id);
+        } else {
+            System.out.printf("Item with ID: %d does not exist\n", id);
+        }
     }
 }

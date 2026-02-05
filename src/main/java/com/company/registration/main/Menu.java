@@ -72,7 +72,8 @@ public class Menu {
         System.out.println("1. Create order");
         System.out.println("2. Find all orders");
         System.out.println("3. Find order by id");
-        System.out.println("4. Add product to an existing order");
+        System.out.println("4. Add Item to an order");
+        System.out.println("5. Remove Item to an order");
         System.out.println("9. Go back");
     }
 }
