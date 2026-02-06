@@ -4,6 +4,7 @@ import com.company.registration.conn.ConnectionFactory;
 import com.company.registration.domain.Client;
 import com.company.registration.domain.Orders;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -88,6 +89,24 @@ public class OrdersDAO {
         String sql = "SELECT * FROM `registration_system`.`orders` WHERE id = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setInt(1, id);
+        return ps;
+    }
+
+    public static void updateOrderById(int idOrder, BigDecimal orderTotal) {
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = updateOrderByIdPreparedStatement(conn, idOrder,  orderTotal)) {
+            ps.executeUpdate();
+            System.out.println("Order updated");
+        } catch (SQLException e) {
+            System.out.printf("Error while trying to update order with ID: %d%n", idOrder);
+        }
+    }
+
+    private static PreparedStatement updateOrderByIdPreparedStatement(Connection conn, int idOrder, BigDecimal orderTotal) throws SQLException {
+        String sql = "UPDATE `registration_system`.`orders` SET `total` = ? WHERE (`id` = ?);";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setBigDecimal(1, orderTotal);
+        ps.setInt(2, idOrder);
         return ps;
     }
 }

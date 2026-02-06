@@ -1,7 +1,6 @@
 package com.company.registration.dao;
 
 import com.company.registration.conn.ConnectionFactory;
-import com.company.registration.domain.Client;
 import com.company.registration.domain.OrderItem;
 import com.company.registration.domain.Orders;
 import com.company.registration.domain.Product;

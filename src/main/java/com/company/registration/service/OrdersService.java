@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class OrdersService {
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -23,12 +24,13 @@ public class OrdersService {
     private static final NumberFormat NF = NumberFormat.getCurrencyInstance(new Locale("pt, br"));
     public static void ordersMenu(int op){
 
-        switch (op){
+        switch (op) {
             case 1 -> saveOrder();
             case 2 -> findAllOrders();
             case 3 -> findOrderById();
-            case 4 -> addProductToOrder();
-            case 5 -> deleteItemFromOrderItem();
+            case 4 -> findOrderWithItemsById();
+            case 5 -> addProductToOrder();
+            case 6 -> deleteItemFromOrderItem();
         }
     }
 
@@ -85,23 +87,65 @@ public class OrdersService {
                 .price(product.getPrice())
                 .build();
         OrderItemDAO.addProductToOrder(orderItem);
+        updateOrderById(idOrder);
     }
 
-    public static void findAllOrderItems() {
+    private static void findAllOrderItems() {
         List<OrderItem> orderItems = OrderItemDAO.findAllOrderItems();
         orderItems.forEach(oi ->
                 System.out.printf("ID: %d | order_id: %d | product_id: %d | quantity: %d | price: %s%n",
                         oi.getId(), oi.getOrder().getId(), oi.getProduct().getId(), oi.getQuantity(), NF.format(oi.getPrice())));
     }
 
-    public static void deleteItemFromOrderItem() {
-        findAllOrderItems();
-        System.out.println("Type te ID of the item you want to delete: ");
+    private static void deleteItemFromOrderItem() {
+        findAllOrders();
+        System.out.println("Type the ID of the order you want to delete the item from: ");
+        int idOrder = Integer.parseInt(SCANNER.nextLine());
+        List<OrderItem> allOrderItems = OrderItemDAO.findAllOrderItems();
+        allOrderItems.stream()
+                .filter(oi -> oi.getOrder().getId() == idOrder)
+                .forEach(oi ->
+                        System.out.printf("ID: %d | order_id: %d | product_id: %d | quantity: %d | price: %s%n",
+                                oi.getId(), oi.getOrder().getId(), oi.getProduct().getId(), oi.getQuantity(), NF.format(oi.getPrice())));
+        System.out.println("Type the ID of the item you want to delete: ");
         int id = Integer.parseInt(SCANNER.nextLine());
-        if (OrderItemDAO.findAllOrderItems().stream().anyMatch(oi -> oi.getId() == id)) {
+        if (OrderItemDAO.findAllOrderItems().stream().filter(oi -> oi.getOrder().getId() == idOrder).anyMatch(oi -> oi.getId() == id)) {
             OrderItemDAO.deleteItemFromOrder(id);
         } else {
-            System.out.printf("Item with ID: %d does not exist\n", id);
+            System.out.printf("Item with ID: %d does not exist in this order\n", id);
         }
+        updateOrderById(idOrder);
+    }
+
+    private static BigDecimal calculateOrderTotal(int id) {
+        Optional<Orders> orderOptional = OrdersDAO.findOrderById(id);
+        if (orderOptional.isEmpty()) return BigDecimal.ZERO;
+        List<OrderItem> allOrderItems = OrderItemDAO.findAllOrderItems();
+        return allOrderItems.stream()
+                .filter(oi -> oi.getOrder().getId() == id)
+                .map(oi -> oi.getPrice().multiply(BigDecimal.valueOf(oi.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private static void findOrderWithItemsById() {
+        findAllOrders();
+        System.out.println("Type the ID of the order you want to find: ");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        Optional<Orders> orderOptional = OrdersDAO.findOrderById(id);
+        if (orderOptional.isEmpty()) return;
+        orderOptional.ifPresent(o ->
+                System.out.printf("ID: %d | client_id: %d | order_date: %s | Total: %s%n",
+                        o.getId(), o.getClient().getId(), o.getOrder_date().format(FORMATTER), NF.format(o.getTotal())));
+        List<OrderItem> allOrderItems = OrderItemDAO.findAllOrderItems();
+        allOrderItems.stream()
+                .filter(oi -> oi.getOrder().getId() == id)
+                .forEach(oi ->
+                        System.out.printf("ID: %d | order_id: %d | product_id: %d | quantity: %d | price: %s%n",
+                                oi.getId(), oi.getOrder().getId(), oi.getProduct().getId(), oi.getQuantity(), NF.format(oi.getPrice())));
+    }
+
+    private static void updateOrderById(int idOrder) {
+        BigDecimal orderTotal = calculateOrderTotal(idOrder);
+        OrdersDAO.updateOrderById(idOrder, orderTotal);
     }
 }
