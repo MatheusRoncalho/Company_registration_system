@@ -74,7 +74,7 @@ public class Menu {
         System.out.println("3. Find order by id");
         System.out.println("4. Find order with items by id");
         System.out.println("5. Add Item to an order");
-        System.out.println("6. Remove Item to an order");
+        System.out.println("6. Remove Item from order");
         System.out.println("9. Go back");
     }
 }

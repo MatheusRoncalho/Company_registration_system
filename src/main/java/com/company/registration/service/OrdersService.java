@@ -98,14 +98,23 @@ public class OrdersService {
     }
 
     private static void deleteItemFromOrderItem() {
-        findAllOrderItems();
-        System.out.println("Type te ID of the item you want to delete: ");
+        findAllOrders();
+        System.out.println("Type the ID of the order you want to delete the item from: ");
+        int idOrder = Integer.parseInt(SCANNER.nextLine());
+        List<OrderItem> allOrderItems = OrderItemDAO.findAllOrderItems();
+        allOrderItems.stream()
+                .filter(oi -> oi.getOrder().getId() == idOrder)
+                .forEach(oi ->
+                        System.out.printf("ID: %d | order_id: %d | product_id: %d | quantity: %d | price: %s%n",
+                                oi.getId(), oi.getOrder().getId(), oi.getProduct().getId(), oi.getQuantity(), NF.format(oi.getPrice())));
+        System.out.println("Type the ID of the item you want to delete: ");
         int id = Integer.parseInt(SCANNER.nextLine());
-        if (OrderItemDAO.findAllOrderItems().stream().anyMatch(oi -> oi.getId() == id)) {
+        if (OrderItemDAO.findAllOrderItems().stream().filter(oi -> oi.getOrder().getId() == idOrder).anyMatch(oi -> oi.getId() == id)) {
             OrderItemDAO.deleteItemFromOrder(id);
         } else {
-            System.out.printf("Item with ID: %d does not exist\n", id);
+            System.out.printf("Item with ID: %d does not exist in this order\n", id);
         }
+        updateOrderById(idOrder);
     }
 
     private static BigDecimal calculateOrderTotal(int id) {
