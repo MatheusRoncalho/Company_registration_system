@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class OrdersService {
     private static final Scanner SCANNER = new Scanner(System.in);
@@ -28,8 +29,7 @@ public class OrdersService {
             case 2 -> findAllOrders();
             case 3 -> findOrderById();
             case 4 -> addProductToOrder();
-            case 5 -> deleteItemFromOrderItem();
-        }
+            case 5 -> deleteItemFromOrderItem();}
     }
 
     private static void saveOrder() {
@@ -103,5 +103,18 @@ public class OrdersService {
         } else {
             System.out.printf("Item with ID: %d does not exist\n", id);
         }
+    }
+
+    private static BigDecimal calculateOrderTotal() {
+        findAllOrders();
+        System.out.println("Type the order ID you want to see the items: ");
+        int id = Integer.parseInt(SCANNER.nextLine());
+        Optional<Orders> orderOptional = OrdersDAO.findOrderById(id);
+        if (orderOptional.isEmpty()) return BigDecimal.ZERO;
+        List<OrderItem> allOrderItems = OrderItemDAO.findAllOrderItems();
+        return allOrderItems.stream()
+                .filter(oi -> oi.getOrder().getId() == id)
+                .map(oi -> oi.getPrice().multiply(BigDecimal.valueOf(oi.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 }
