@@ -30,7 +30,8 @@ public class OrdersService {
             case 3 -> findOrderById();
             case 4 -> findOrderWithItemsById();
             case 5 -> addProductToOrder();
-            case 6 -> deleteItemFromOrderItem();
+            case 6 -> deleteItemFromOrder();
+            case 7 -> deleteOrderById();
         }
     }
 
@@ -97,10 +98,11 @@ public class OrdersService {
                         oi.getId(), oi.getOrder().getId(), oi.getProduct().getId(), oi.getQuantity(), NF.format(oi.getPrice())));
     }
 
-    private static void deleteItemFromOrderItem() {
+    private static void deleteItemFromOrder() {
         findAllOrders();
         System.out.println("Type the ID of the order you want to delete the item from: ");
         int idOrder = Integer.parseInt(SCANNER.nextLine());
+        if (OrdersDAO.findOrderById(idOrder).isEmpty()) return;
         List<OrderItem> allOrderItems = OrderItemDAO.findAllOrderItems();
         allOrderItems.stream()
                 .filter(oi -> oi.getOrder().getId() == idOrder)
@@ -147,5 +149,12 @@ public class OrdersService {
     private static void updateOrderById(int idOrder) {
         BigDecimal orderTotal = calculateOrderTotal(idOrder);
         OrdersDAO.updateOrderById(idOrder, orderTotal);
+    }
+
+    private static void deleteOrderById() {
+        findAllOrders();
+        System.out.println("Type the ID of the order you want to delete: ");
+        int idOrder = Integer.parseInt(SCANNER.nextLine());
+        OrdersDAO.deleteOrderById(idOrder);
     }
 }

@@ -109,4 +109,22 @@ public class OrdersDAO {
         ps.setInt(2, idOrder);
         return ps;
     }
+
+    public static void deleteOrderById(int idOrder) {
+        try(Connection conn = ConnectionFactory.getConnection();
+        PreparedStatement ps = deleteOrderByIdPreparedStatement(conn, idOrder)) {
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected == 0) throw new SQLException();
+            System.out.println("Order deleted sucessfully");
+        } catch (SQLException e) {
+            System.out.printf("Error while trying to delete order with ID: %d%n", idOrder);
+        }
+    }
+
+    private static PreparedStatement deleteOrderByIdPreparedStatement(Connection conn, int idOrder) throws SQLException {
+        String sql = "DELETE FROM `registration_system`.`orders` WHERE id = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setInt(1, idOrder);
+        return ps;
+    }
 }
